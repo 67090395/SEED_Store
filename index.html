@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
-  dashboard_team08.html - แดชบอร์ดโกดังเมล็ดพันธุ์ (ไฟล์เดียว เปิดในเบราว์เซอร์ได้เลย)
-  เปิด: dashboard_team08.html?team=team08
+  แดชบอร์ดโกดังเมล็ดพันธุ์ (ไฟล์เดียว เปิดในเบราว์เซอร์ได้เลย)
+  เปิด: index.html?team=team08
   ฟัง bento-aiot/<ทีม>/# : /event และ /telemetry   ส่งคำสั่งเข้า /cmd (ack, set t_hi)
   คีย์: id crop level alert temp_c rh sun_c germ_pct wet_min (+ event duration_s)
   เกณฑ์ T_WARN/T_RISK/RH_WARN/RH_RISK ให้ตรงกับไฟล์บอร์ด
@@ -12,123 +12,251 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Seed Store · โกดังเมล็ดพันธุ์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f5f2eb;--ink:#1d1c17;--dim:#8a8675;--line:#dcd7c8;--soft:#ebe6d8;--ok:#3d7a45;--warn:#d9822b;--bad:#c4473a;
---f:system-ui,-apple-system,"Segoe UI","Noto Sans Thai","Sarabun",sans-serif;--n:Georgia,"Times New Roman",serif}
-@media(prefers-color-scheme:dark){:root{--bg:#131511;--ink:#ece8da;--dim:#8f8b78;--line:#2b2e26;--soft:#1d201a;--ok:#7fc286;--warn:#f0a050;--bad:#ee7a6b}}
+:root{
+  --bg:#070b10;--card:#0d141c;--ink:#e6f1f7;--dim:#8296a6;--line:#1d2b38;--soft:#16222d;
+  --ok:#3ddc97;--warn:#ffb020;--bad:#ff5c5c;--accent:#2dd4e8;--on-accent:#04141a;--rh:#2dd4e8;
+  --glow:rgba(45,212,232,.13);--grid:rgba(130,150,166,.07);--glowr:22px;
+  --body:"IBM Plex Sans Thai","Noto Sans Thai","Sarabun",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --head:"Bai Jamjuree","IBM Plex Sans Thai","Noto Sans Thai",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r-card:14px;--r-in:8px;
+}
+@media(prefers-color-scheme:light){:root{
+  --bg:#e9f0f5;--card:#ffffff;--ink:#0b1a26;--dim:#52677a;--line:#d0dce6;--soft:#e3ebf1;
+  --ok:#12885a;--warn:#b86e00;--bad:#c62d2d;--accent:#0a7e94;--on-accent:#ffffff;--rh:#0a7e94;
+  --glow:rgba(10,126,148,.10);--grid:rgba(11,26,38,.05);--glowr:0px;
+}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);line-height:1.5}
-.wrap{max-width:1040px;margin:0 auto;padding:22px 20px 40px}
-header{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding-bottom:18px}
-.brand{font-family:var(--n);font-size:22px;letter-spacing:.02em}
-.brand small{display:block;font-family:var(--f);font-size:12px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase}
+body{margin:0;color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;background-color:var(--bg);
+  background-image:radial-gradient(900px 420px at 50% -140px,var(--glow),transparent),linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:auto,40px 40px,40px 40px;background-attachment:fixed}
+.mono{font-family:var(--mono)}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 24px 48px}
+
+/* ส่วนหัว */
+header{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;justify-content:space-between;padding:4px 0 22px}
+.brand{display:flex;align-items:center;gap:14px}
+.mark{width:46px;height:46px;border-radius:12px;border:1px solid var(--accent);color:var(--accent);background:var(--glow);display:grid;place-items:center;flex:none}
+.brand h1{margin:0;font-family:var(--head);font-weight:700;font-size:24px;line-height:1.15;display:flex;align-items:center;gap:10px}
+.badge{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:1px 7px;line-height:1.5}
+.brand p{margin:2px 0 0;font-size:14px;color:var(--dim)}
+.brand .topic{font-size:12px;color:var(--accent);opacity:.85;margin-top:3px}
+.conn{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:14px;color:var(--dim);min-height:38px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--dim);flex:none}
+.dot.ok{background:var(--ok);box-shadow:0 0 8px var(--ok);animation:blink 2.4s ease-in-out infinite}
+.dot.bad{background:var(--bad);box-shadow:0 0 8px var(--bad)}
+.dot.lg{width:16px;height:16px;box-shadow:0 0 14px 1px currentColor}
+@keyframes blink{50%{opacity:.45}}
+
+/* ปุ่มและช่องกรอก */
+input,button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:var(--r-in);padding:8px 16px;min-height:42px}
+input{width:120px;font-family:var(--mono);font-size:15px}
+input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{cursor:pointer;font-weight:500;transition:border-color .15s,background .15s}
+button:hover{border-color:var(--accent)}
+button.solid{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}
+button.solid:hover{border-color:var(--ink)}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-input,button{font:inherit;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:999px;padding:7px 16px;min-height:38px}
-input{width:110px}
-button{cursor:pointer}
-button:hover{border-color:var(--ink)}
-button.solid{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-button.on{border-color:var(--ink)}
-.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--dim);margin-right:7px;vertical-align:middle}
-.dot.ok{background:var(--ok)}.dot.bad{background:var(--bad)}
-.tag{font-size:13px;color:var(--dim)}
-.banner{display:none;margin:0 0 14px;padding:12px 18px;border-radius:12px;color:#fff;font-weight:600}
-.banner.show{display:block}
-#alarm{background:var(--bad)}#silent{background:#4a4a3c}
-section{border-top:1px solid var(--line);padding:22px 0}
-.lab{font-size:12px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase;margin:0 0 6px}
-.hero{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-.big{font-family:var(--n);font-size:clamp(52px,9vw,92px);line-height:1;letter-spacing:-.02em}
-.big small{font-size:.32em;color:var(--dim);margin-left:6px;letter-spacing:0}
-.sub{margin-top:8px;font-size:14px;color:var(--dim);min-height:21px}
-.rail{position:relative;height:4px;border-radius:2px;background:var(--soft);margin-top:14px}
-.rail i{position:absolute;top:0;bottom:0;border-radius:2px}
-.rail b{position:absolute;top:-5px;width:2px;height:14px;background:var(--ink);left:0;transition:left .5s}
-.status{display:flex;flex-wrap:wrap;gap:12px 40px;align-items:baseline;justify-content:space-between}
-.state{font-family:var(--n);font-size:clamp(30px,5vw,46px)}
-.chead{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:10px}
+
+/* แบนเนอร์เตือน */
+.banner{display:none;align-items:center;gap:12px;margin:0 0 16px;padding:14px 20px;border-radius:12px;color:#fff;font-weight:600}
+.banner.show{display:flex}
+#alarm{background:var(--bad);box-shadow:0 0 24px rgba(255,92,92,.35)}#silent{background:#35424d}
+
+/* กริดหลัก 12 คอลัมน์ */
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:22px 24px;min-width:0}
+.card::before,.card::after{content:"";position:absolute;width:16px;height:16px;border:2px solid var(--accent);pointer-events:none;opacity:.8}
+.card::before{top:-1px;left:-1px;border-right:0;border-bottom:0;border-top-left-radius:var(--r-card)}
+.card::after{bottom:-1px;right:-1px;border-left:0;border-top:0;border-bottom-right-radius:var(--r-card)}
+.card h2{margin:0 0 14px;font-family:var(--head);font-weight:600;font-size:17px}
+.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-4{grid-column:span 4}
+.side{grid-column:span 4;display:grid;gap:16px;align-content:start}
+.side .card{margin:0}
+
+/* แถบสถานะ */
+.status{display:flex;flex-wrap:wrap;gap:16px 48px;align-items:center;justify-content:space-between;border-left:6px solid var(--dim)}
+.status::before{display:none}
+.lab{margin:0 0 6px;font-size:14px;font-weight:500;color:var(--dim)}
+.state{display:flex;align-items:center;gap:14px;font-family:var(--head);font-weight:700;font-size:clamp(28px,4.5vw,42px);line-height:1.15}
+.why{margin-top:6px;font-size:15px;color:var(--dim);min-height:23px}
+.facts{display:flex;gap:40px;margin:0}
+.facts dt{font-size:14px;color:var(--dim)}
+.facts dd{margin:2px 0 0;font-family:var(--head);font-weight:600;font-size:22px}
+.facts dd span{font-family:var(--mono);font-weight:500}
+
+/* การ์ดวัดค่า */
+.metric .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.metric .head h2{margin:0}
+.metric .head span{font-family:var(--mono);font-size:12px;color:var(--dim)}
+.big{font-family:var(--mono);font-weight:500;font-size:clamp(50px,6vw,74px);line-height:1.05;letter-spacing:-.04em;font-variant-numeric:tabular-nums;text-shadow:0 0 var(--glowr) color-mix(in srgb,currentColor 40%,transparent)}
+.big small{font-size:.3em;font-weight:500;color:var(--dim);margin-left:8px;letter-spacing:0;text-shadow:none}
+.rail{position:relative;height:8px;border-radius:4px;background:var(--soft);margin-top:24px}
+.rail i{position:absolute;top:0;bottom:0;border-radius:4px}
+.rail::after{content:"";position:absolute;left:0;right:0;top:14px;height:6px;border-right:1px solid var(--dim);background:repeating-linear-gradient(90deg,var(--dim) 0 1px,transparent 1px 10%);opacity:.55}
+.rail b{position:absolute;top:-6px;width:4px;height:20px;margin-left:-2px;border-radius:2px;background:var(--ink);box-shadow:0 0 10px var(--accent);left:0;transition:left .5s;z-index:1}
+.rail .tick{background:var(--dim);box-shadow:none;width:2px;margin-left:-1px;top:-3px;height:14px;opacity:.9}
+.scale{display:flex;justify-content:space-between;margin-top:24px;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.sub{margin-top:10px;font-size:14px;color:var(--dim);min-height:44px}
+
+/* กราฟ */
+.chead{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:14px}
+.chead h2{margin:0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--r-in);overflow:hidden}
+.seg button{border:0;border-radius:0;min-height:36px;padding:6px 14px;background:transparent;color:var(--dim)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--accent);color:var(--on-accent);font-weight:600}
 .chart svg{display:block;width:100%;height:auto}
-.leg{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--dim);margin-top:6px}
-.leg i{display:inline-block;width:18px;border-top:2px solid;vertical-align:middle;margin-right:6px}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:40px}
-ul{list-style:none;margin:0;padding:0;max-height:240px;overflow:auto;font-size:14px}
-li{padding:7px 0;border-bottom:1px solid var(--line)}
-.hours{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;margin-top:6px}
-.hours span{height:22px;border-radius:3px;background:var(--soft);font-size:9px;color:var(--dim);display:grid;place-items:center}
-footer{border-top:1px solid var(--line);padding-top:16px;font-size:12px;color:var(--dim)}
-@media(max-width:720px){.hero,.two{grid-template-columns:1fr}.hero{gap:26px}}
+.chart text{font-family:var(--mono)}
+.leg{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:14px;color:var(--dim);margin-top:10px}
+.leg i{display:inline-block;width:20px;border-top:3px solid;vertical-align:middle;margin-right:8px}
+#ci{font-family:var(--mono);font-size:13px}
+
+/* สั่งการ / ชั่วโมงแจ้งเตือน */
+.cmd{display:grid;gap:12px}
+.cmd .solid{width:100%}
+.setrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.setrow label{font-size:14px;color:var(--dim)}
+.msg{margin:0;font-family:var(--mono);font-size:12px;color:var(--dim);min-height:20px}
+.hours{display:grid;grid-template-columns:repeat(12,1fr);gap:5px}
+.hours span{height:30px;border-radius:6px;background:var(--soft);font-family:var(--mono);font-size:11px;color:var(--dim);display:grid;place-items:center}
+
+/* สมุดโกดัง */
+ul{list-style:none;margin:0;padding:0;max-height:280px;overflow:auto;font-family:var(--mono);font-size:13px}
+li{padding:9px 0;border-bottom:1px solid var(--line)}
+li::before{content:">";color:var(--accent);margin-right:10px}
+li:last-child{border-bottom:0}
+footer{margin-top:20px;font-size:13px;color:var(--dim);max-width:78ch}
+
+@media(max-width:960px){
+  .span-8,.side{grid-column:span 12}
+  .side{grid-template-columns:1fr 1fr}
+  .metric{grid-column:span 12}
+}
+@media(max-width:640px){
+  .wrap{padding:16px 16px 40px}
+  .card{padding:18px}
+  .side{grid-template-columns:1fr}
+  .facts{gap:28px}
+  .conn{width:100%}
+}
+@media(prefers-reduced-motion:reduce){.rail b,button{transition:none}.dot.ok{animation:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-  <div class="brand">Seed Store<small>โกดังเมล็ดพันธุ์ · ความงอกต้องไม่หาย</small></div>
-  <div class="row">
-    <input id="team" placeholder="team08" autocomplete="off">
+  <div class="brand">
+    <div class="mark" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4.5-2-7-5.6-7-9.5C5 7 8 3.5 12 3c4 .5 7 4 7 8.5 0 3.900-2.500 7.500-7 9.500z"/><path d="M12 21V9"/></svg>
+    </div>
+    <div>
+      <h1>Seed Store<span class="badge">AIoT</span></h1>
+      <p>โกดังเมล็ดพันธุ์ · ความงอกต้องไม่หาย</p>
+      <p class="topic mono"><span id="topic">bento-aiot/&lt;ทีม&gt;/#</span></p>
+    </div>
+  </div>
+  <div class="conn">
+    <input id="team" placeholder="team08" autocomplete="off" aria-label="รหัสทีม">
     <button id="go" class="solid">เชื่อมต่อ</button>
-    <span class="tag"><i id="cd" class="dot"></i><span id="conn">ยังไม่ต่อ</span></span>
-    <span class="tag"><i id="bd" class="dot"></i><span id="board">บอร์ด: รอข้อมูล</span></span>
+    <span class="pill"><i id="cd" class="dot"></i><span id="conn">ยังไม่ต่อ</span></span>
+    <span class="pill"><i id="bd" class="dot"></i><span id="board">บอร์ด: รอข้อมูล</span></span>
   </div>
 </header>
 
 <div id="alarm" class="banner" role="alert">ตรวจสอบเมล็ดพันธุ์ทันที: เปิดพัดลมระบาย ย้ายกระสอบขึ้นแคร่ แล้วกดรับทราบ</div>
 <div id="silent" class="banner" role="alert"></div>
 
-<section style="border-top:0;padding-top:8px">
-  <div class="hero">
-    <div><p class="lab">ความชื้น</p><div class="big"><span id="rh">--</span><small>%RH</small></div>
-      <div class="rail"><i id="rz"></i><b id="rm"></b></div><div id="rhs" class="sub">เส้นเฝ้าระวัง --</div></div>
-    <div><p class="lab">อุณหภูมิ</p><div class="big"><span id="t">--</span><small>C</small></div>
-      <div id="ts" class="sub">แดด +-- C</div></div>
-    <div><p class="lab">คะแนนความงอก (จำลอง)</p><div class="big"><span id="germ">--</span><small>/100</small></div>
-      <div class="rail"><i id="gb" style="left:0;width:0"></i></div><div id="gs" class="sub">ยังไม่มีข้อมูล</div></div>
-  </div>
-</section>
+<main class="grid">
 
-<section>
-  <div class="status">
-    <div><p class="lab">สถานะ</p><div class="state"><i id="sd" class="dot"></i><span id="state">รอข้อความแรกจากบอร์ด</span></div></div>
-    <div class="tag" style="text-align:right"><div>ชนิดเมล็ด: <b id="crop">--</b></div><div>ชื้นสะสม: <b id="wet">--</b> นาที</div><div id="why"></div></div>
-  </div>
-</section>
-
-<section>
-  <div class="chead">
-    <p class="lab" style="margin:0">ประวัติแบบเรียลไทม์</p>
-    <div class="row">
-      <button class="rg" data-m="5">5 นาที</button><button class="rg on" data-m="15">15 นาที</button><button class="rg" data-m="0">ทั้งหมด</button>
-    </div>
-  </div>
-  <div class="chart"><svg id="chart" viewBox="0 0 960 280" role="img" aria-label="กราฟความชื้นและอุณหภูมิ"></svg></div>
-  <div class="leg"><span><i style="border-color:var(--ink)"></i>ความชื้น (ซ้าย %)</span><span><i style="border-color:var(--warn)"></i>อุณหภูมิ (ขวา C)</span>
-    <span><i style="border-style:dashed;border-color:var(--dim)"></i>เส้นเฝ้าระวัง</span><span id="ci"></span></div>
-</section>
-
-<section>
-  <div class="two">
+  <section id="statusCard" class="card span-12 status" aria-label="สถานะโกดัง">
     <div>
-      <p class="lab">สั่งการ</p>
-      <div class="row">
-        <button id="ack" class="solid">รับทราบ (ack)</button>
-        <span class="tag">เกณฑ์ร้อนใหม่</span><input id="thi" type="number" min="16" max="45" value="28" style="width:80px"><span class="tag">C</span>
-        <button id="set">ส่ง</button>
+      <p class="lab">สถานะโกดัง</p>
+      <div class="state"><i id="sd" class="dot lg"></i><span id="state">รอข้อความแรกจากบอร์ด</span></div>
+      <div id="why" class="why"></div>
+    </div>
+    <dl class="facts">
+      <div><dt>ชนิดเมล็ด</dt><dd id="crop">--</dd></div>
+      <div><dt>ชื้นสะสม</dt><dd><span id="wet">--</span> นาที</dd></div>
+    </dl>
+  </section>
+
+  <section class="card span-4 metric" aria-label="ความชื้น">
+    <div class="head"><h2>ความชื้น</h2><span>หน่วย %RH</span></div>
+    <div class="big"><span id="rh">--</span><small>%RH</small></div>
+    <div class="rail"><i id="rz"></i><i id="rz2"></i><b id="rm"></b></div>
+    <div class="scale"><span>0</span><span>50</span><span>100</span></div>
+    <div id="rhs" class="sub">เส้นเฝ้าระวัง --</div>
+  </section>
+
+  <section class="card span-4 metric" aria-label="อุณหภูมิ">
+    <div class="head"><h2>อุณหภูมิ</h2><span>หน่วย °C</span></div>
+    <div class="big"><span id="t">--</span><small>°C</small></div>
+    <div class="rail"><i id="tz"></i><i id="tz2"></i><b id="tm"></b></div>
+    <div class="scale"><span>15</span><span>30</span><span>45</span></div>
+    <div id="ts" class="sub">แดด +-- C</div>
+  </section>
+
+  <section class="card span-4 metric" aria-label="คะแนนความงอก">
+    <div class="head"><h2>คะแนนความงอก</h2><span>ค่าจำลอง</span></div>
+    <div class="big"><span id="germ">--</span><small>/100</small></div>
+    <div class="rail"><i id="gb" style="left:0;width:0"></i><b class="tick" style="left:80%"></b></div>
+    <div class="scale"><span>0</span><span>50</span><span>100</span></div>
+    <div id="gs" class="sub">ยังไม่มีข้อมูล</div>
+  </section>
+
+  <section class="card span-8">
+    <div class="chead">
+      <h2>ประวัติแบบเรียลไทม์</h2>
+      <div class="seg">
+        <button class="rg" data-m="5">5 นาที</button><button class="rg on" data-m="15">15 นาที</button><button class="rg" data-m="0">ทั้งหมด</button>
       </div>
-      <p id="cmdMsg" class="tag"></p>
     </div>
-    <div>
-      <p class="lab">ชั่วโมงที่มีการแจ้งเตือน (วันนี้)</p>
+    <div class="chart"><svg id="chart" viewBox="0 0 720 320" role="img" aria-label="กราฟความชื้นและอุณหภูมิ"></svg></div>
+    <div class="leg">
+      <span><i style="border-color:var(--rh)"></i>ความชื้น (ซ้าย %)</span>
+      <span><i style="border-color:var(--warn)"></i>อุณหภูมิ (ขวา °C)</span>
+      <span><i style="border-top-style:dashed;border-color:var(--dim)"></i>เส้นเฝ้าระวัง</span>
+      <span id="ci"></span>
+    </div>
+  </section>
+
+  <div class="side">
+    <section class="card">
+      <h2>สั่งการ</h2>
+      <div class="cmd">
+        <button id="ack" class="solid">รับทราบ (ack)</button>
+        <div class="setrow">
+          <label for="thi">เกณฑ์ร้อนใหม่</label>
+          <input id="thi" type="number" min="16" max="45" value="28" style="width:84px">
+          <span class="lab" style="margin:0">°C</span>
+          <button id="set">ส่ง</button>
+        </div>
+        <p id="cmdMsg" class="msg"></p>
+      </div>
+    </section>
+    <section class="card">
+      <h2>ชั่วโมงที่มีการแจ้งเตือน (วันนี้)</h2>
       <div id="hours" class="hours"></div>
-    </div>
+    </section>
   </div>
-</section>
 
-<section>
-  <div class="chead"><p class="lab" style="margin:0">สมุดโกดัง</p>
-    <div class="row"><button id="csv">CSV เหตุการณ์</button><button id="csvH">CSV ประวัติ</button></div></div>
-  <ul id="log"></ul>
-</section>
+  <section class="card span-12">
+    <div class="chead">
+      <h2>สมุดโกดัง</h2>
+      <div class="row"><button id="csv">CSV เหตุการณ์</button><button id="csvH">CSV ประวัติ</button><button id="clr">ล้างประวัติ</button></div>
+    </div>
+    <ul id="log"></ul>
+  </section>
 
-<footer>เกณฑ์ในหน้านี้: อุณหภูมิ 28 / 31 C · ความชื้น 65 / 75 %RH (ปรับที่ค่าคงที่บนสุดของสคริปต์) · คะแนนความงอกเป็นค่าสาธิตที่บอร์ดคิด ไม่ใช่ผลเพาะจริง</footer>
+</main>
+
+<footer>เกณฑ์ในหน้านี้: อุณหภูมิ 28 / 31 °C · ความชื้น 65 / 75 %RH (ปรับที่ค่าคงที่บนสุดของสคริปต์) · คะแนนความงอกเป็นค่าสาธิตที่บอร์ดคิด ไม่ใช่ผลเพาะจริง</footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/mqtt@5.16.0/dist/mqtt.min.js"
@@ -136,12 +264,13 @@ footer{border-top:1px solid var(--line);padding-top:16px;font-size:12px;color:va
 <script>
 const BROKER_URL="wss://broker.hivemq.com:8884/mqtt",ROOT="bento-aiot";
 const T_WARN=28,T_RISK=31,RH_WARN=65,RH_RISK=75,GERM_TEST=80,SILENT_MS=60000,HIST_MAX=3000;
+const TMIN=15,TMAX=45;
 const LV=["ปกติ","เฝ้าระวัง","ตรวจสอบ"],COL=["var(--ok)","var(--warn)","var(--bad)"];
 const CROP_TH={rice:"เมล็ดข้าว",corn:"เมล็ดข้าวโพด",bean:"เมล็ดถั่ว"};
 const WHY={hot:"อุณหภูมิสูง",wet:"ความชื้นสูง",cold:"อุณหภูมิต่ำ",wet_accumulated:"ชื้นสะสม",ok:"ปกติ"};
 const $=id=>document.getElementById(id);
 let client=null,team=new URLSearchParams(location.search).get("team")||"",lastSeen=null,range=15,vib=false;
-const hist=[],rows=[],hours=new Array(24).fill(0),TITLE=document.title;
+const hist=[],rows=[],logs=[],hours=new Array(24).fill(0),TITLE=document.title;
 $("team").value=team;
 const num=v=>typeof v==="number"&&Number.isFinite(v)?v:null;
 const hms=d=>d.toTimeString().slice(0,8);
@@ -150,9 +279,37 @@ const put=(id,txt,col)=>{const e=$(id);e.textContent=txt;if(col)e.style.color=co
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function conn(msg,ok){put("conn",msg);$("cd").className="dot"+(ok?" ok":"");}
 
+// ---- เก็บประวัติไว้ในเบราว์เซอร์ (แยกตามทีม) รีเฟรชแล้วกราฟและสมุดโกดังไม่หาย ----
+const STORE="seedstore:v1:",ROWS_MAX=2000,LOG_MAX=80;
+let loadedTeam="",saveTimer=null,dayKey="";
+const todayKey=()=>{const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();};
+function saveNow(){
+  saveTimer=null;if(!loadedTeam)return;
+  const pack=()=>JSON.stringify({hist:hist,rows:rows.slice(-ROWS_MAX),logs:logs,hours:hours,day:dayKey});
+  try{localStorage.setItem(STORE+loadedTeam,pack());}
+  catch(e){try{hist.splice(0,Math.floor(hist.length/2));localStorage.setItem(STORE+loadedTeam,pack());}catch(e2){}}
+}
+function saveSoon(){if(!saveTimer)saveTimer=setTimeout(saveNow,2000);}
+function loadStore(tm){
+  hist.length=0;rows.length=0;logs.length=0;hours.fill(0);$("log").textContent="";dayKey=todayKey();loadedTeam=tm;
+  let s=null;try{s=JSON.parse(localStorage.getItem(STORE+tm)||"null");}catch(e){}
+  if(s&&typeof s==="object"){
+    if(Array.isArray(s.hist))s.hist.forEach(p=>{if(p&&num(p.ts)!==null&&num(p.rh)!==null)hist.push({ts:p.ts,rh:p.rh,t:num(p.t)});});
+    if(Array.isArray(s.rows))s.rows.forEach(r=>{if(Array.isArray(r))rows.push(r);});
+    if(Array.isArray(s.logs))s.logs.forEach(l=>{if(l&&typeof l.txt==="string")logLine(l.txt,Number.isInteger(l.lv)&&l.lv>=0&&l.lv<=2?l.lv:null);});
+    if(s.day===dayKey&&Array.isArray(s.hours))s.hours.forEach((n,i)=>{if(i<24&&Number.isInteger(n)&&n>=0)hours[i]=n;});
+  }
+  drawHours();drawChart();
+}
+
 // ---- ค่าที่แสดง ----
-function drawRail(){ // แถบความชื้น: โซนเฝ้าระวังเป็นสีส้มจาง
-  const z=$("rz");z.style.left=RH_WARN+"%";z.style.width=(100-RH_WARN)+"%";z.style.background="var(--warn)";z.style.opacity=".35";
+function zone(id,from,to,col,op){ // โซนสีบนแถบ: เฝ้าระวังเป็นสีส้ม ตรวจสอบเป็นสีแดง
+  const z=$(id);z.style.left=from+"%";z.style.width=(to-from)+"%";z.style.background=col;z.style.opacity=op;
+}
+const tPos=v=>clamp((v-TMIN)/(TMAX-TMIN)*100,0,100);
+function drawRail(){
+  zone("rz",RH_WARN,RH_RISK,"var(--warn)",".45");zone("rz2",RH_RISK,100,"var(--bad)",".5");
+  zone("tz",tPos(T_WARN),tPos(T_RISK),"var(--warn)",".45");zone("tz2",tPos(T_RISK),100,"var(--bad)",".5");
   put("rhs","เฝ้าระวังเกิน "+RH_WARN+" %RH · ตรวจสอบเกิน "+RH_RISK);
 }
 function showGerm(g){
@@ -163,7 +320,7 @@ function showGerm(g){
 function applyReading(d){
   const t=num(d.temp_c),rh=num(d.rh),g=num(d.germ_pct),w=num(d.wet_min),sun=num(d.sun_c);
   if(rh!==null){put("rh",rh.toFixed(0),COL[hLv(rh)]);$("rm").style.left=clamp(rh,0,100)+"%";}
-  if(t!==null){put("t",t.toFixed(1),COL[tLv(t)]);put("ts",["อุณหภูมิปกติ","เฝ้าระวัง: เกิน "+T_WARN+" C","ตรวจสอบ: เกิน "+T_RISK+" C"][tLv(t)]+(sun!==null?" · แดด +"+sun+" C":""));}
+  if(t!==null){put("t",t.toFixed(1),COL[tLv(t)]);$("tm").style.left=tPos(t)+"%";put("ts",["อุณหภูมิปกติ","เฝ้าระวัง: เกิน "+T_WARN+" C","ตรวจสอบ: เกิน "+T_RISK+" C"][tLv(t)]+(sun!==null?" · แดด +"+sun+" C":""));}
   if(g!==null)showGerm(Math.round(g));
   if(w!==null)put("wet",String(w));
   if(typeof d.crop==="string")put("crop",CROP_TH[d.crop]||d.crop.slice(0,20));
@@ -172,44 +329,51 @@ function applyReading(d){
 function addHist(rh,t){
   const ts=Date.now(),l=hist[hist.length-1];
   if(l&&ts-l.ts<1500){l.rh=rh;if(t!==null)l.t=t;}else{hist.push({ts:ts,rh:rh,t:t});if(hist.length>HIST_MAX)hist.shift();}
-  drawChart();
+  saveSoon();drawChart();
 }
 
 // ---- กราฟ (SVG วาดด้วย DOM ไม่ใช้ innerHTML) ----
 function el(n,a,txt){const e=document.createElementNS("http://www.w3.org/2000/svg",n);for(const k in a)e.setAttribute(k,String(a[k]));if(txt!==undefined)e.textContent=txt;return e;}
 function drawChart(){
-  const W=960,H=280,L=40,R=40,T=10,B=26,pw=W-L-R,ph=H-T-B,s=$("chart");s.textContent="";
+  const s=$("chart"),W=Math.max(300,Math.round(s.parentNode.clientWidth)||720),H=W<520?260:320,L=34,R=34,T=12,B=28,pw=W-L-R,ph=H-T-B;
+  s.setAttribute("viewBox","0 0 "+W+" "+H);s.textContent="";
   const add=e=>s.appendChild(e),dim="var(--dim)";
-  if(!hist.length){add(el("text",{x:W/2,y:H/2,"text-anchor":"middle","font-size":15,fill:dim},"รอข้อมูลจากบอร์ด..."));return;}
+  if(!hist.length){add(el("text",{x:W/2,y:H/2,"text-anchor":"middle","font-size":16,fill:dim},"รอข้อมูลจากบอร์ด..."));return;}
   const te=hist[hist.length-1].ts;let ts0=range>0?te-range*60000:hist[0].ts;if(te-ts0<10000)ts0=te-10000;
   const pts=hist.filter(p=>p.ts>=ts0),X=v=>L+pw*(v-ts0)/(te-ts0);
-  const YR=v=>T+ph*(1-clamp(v,0,100)/100),TMIN=15,TMAX=45,YT=v=>T+ph*(1-(clamp(v,TMIN,TMAX)-TMIN)/(TMAX-TMIN));
+  const YR=v=>T+ph*(1-clamp(v,0,100)/100),YT=v=>T+ph*(1-(clamp(v,TMIN,TMAX)-TMIN)/(TMAX-TMIN));
   for(let v=0;v<=100;v+=25){const y=YR(v);
     add(el("line",{x1:L,y1:y,x2:W-R,y2:y,stroke:"var(--line)"}));
-    add(el("text",{x:L-8,y:y+4,"text-anchor":"end","font-size":11,fill:dim},String(v)));
-    add(el("text",{x:W-R+8,y:y+4,"font-size":11,fill:"var(--warn)"},String(Math.round(TMIN+(TMAX-TMIN)*v/100))));}
-  for(let i=0;i<=4;i++){const v=ts0+(te-ts0)*i/4;add(el("text",{x:X(v),y:H-6,"text-anchor":i==0?"start":(i==4?"end":"middle"),"font-size":11,fill:dim},hms(new Date(v))));}
+    add(el("text",{x:L-8,y:y+4,"text-anchor":"end","font-size":12,fill:dim},String(v)));
+    add(el("text",{x:W-R+8,y:y+4,"font-size":12,fill:"var(--warn)"},String(Math.round(TMIN+(TMAX-TMIN)*v/100))));}
+  const nt=W<520?2:4;
+  for(let i=0;i<=nt;i++){const v=ts0+(te-ts0)*i/nt;add(el("text",{x:X(v),y:H-7,"text-anchor":i==0?"start":(i==nt?"end":"middle"),"font-size":12,fill:dim},hms(new Date(v))));}
   add(el("line",{x1:L,y1:YR(RH_WARN),x2:W-R,y2:YR(RH_WARN),stroke:dim,"stroke-dasharray":"5 5"}));
   add(el("line",{x1:L,y1:YT(T_WARN),x2:W-R,y2:YT(T_WARN),stroke:"var(--warn)","stroke-dasharray":"5 5",opacity:.7}));
-  add(el("polyline",{points:pts.map(p=>X(p.ts).toFixed(1)+","+YR(p.rh).toFixed(1)).join(" "),fill:"none",stroke:"var(--ink)","stroke-width":2,"stroke-linejoin":"round"}));
-  const tp=pts.filter(p=>p.t!==null);
-  if(tp.length)add(el("polyline",{points:tp.map(p=>X(p.ts).toFixed(1)+","+YT(p.t).toFixed(1)).join(" "),fill:"none",stroke:"var(--warn)","stroke-width":2,"stroke-linejoin":"round"}));
-  const e=pts[pts.length-1];add(el("circle",{cx:X(e.ts),cy:YR(e.rh),r:4.5,fill:"var(--ink)"}));
-  if(e.t!==null)add(el("circle",{cx:X(e.ts),cy:YT(e.t),r:4.5,fill:"var(--warn)"}));
+  const GAP=90000; // ข้อมูลขาดเกิน 90 วินาที ตัดเส้นแทนการลากข้ามช่วง
+  const line=(arr,Y,col)=>{let seg=[],prev=null;
+    const flush=()=>{if(seg.length>1)add(el("polyline",{points:seg.join(" "),fill:"none",stroke:col,"stroke-width":2.5,"stroke-linejoin":"round"}));
+      else if(seg.length===1){const q=seg[0].split(",");add(el("circle",{cx:q[0],cy:q[1],r:2.5,fill:col}));}seg=[];};
+    arr.forEach(p=>{if(prev!==null&&p.ts-prev>GAP)flush();seg.push(X(p.ts).toFixed(1)+","+Y(p.v).toFixed(1));prev=p.ts;});flush();};
+  line(pts.map(p=>({ts:p.ts,v:p.rh})),YR,"var(--rh)");
+  line(pts.filter(p=>p.t!==null).map(p=>({ts:p.ts,v:p.t})),YT,"var(--warn)");
+  const e=pts[pts.length-1];add(el("circle",{cx:X(e.ts),cy:YR(e.rh),r:5,fill:"var(--rh)"}));
+  if(e.t!==null)add(el("circle",{cx:X(e.ts),cy:YT(e.t),r:5,fill:"var(--warn)"}));
   const v=pts.map(p=>p.rh);put("ci","RH "+Math.min(...v).toFixed(0)+"-"+Math.max(...v).toFixed(0)+" · "+pts.length+" จุด");
 }
 
 // ---- สถานะ / สมุด ----
 function drawHours(){const b=$("hours");b.textContent="";const m=Math.max(1,...hours);
   hours.forEach((n,h)=>{const c=document.createElement("span");c.textContent=String(h);
-    if(n){c.style.background="var(--bad)";c.style.opacity=(.3+.7*n/m).toFixed(2);c.style.color="#fff";}c.title=h+":00 แจ้ง "+n+" ครั้ง";b.appendChild(c);});}
-function logLine(txt,lv){const li=document.createElement("li");li.textContent=txt;if(lv!==null)li.style.color=COL[lv];$("log").prepend(li);while($("log").children.length>80)$("log").lastChild.remove();}
+    if(n){c.style.background="var(--bad)";c.style.opacity=(.35+.65*n/m).toFixed(2);c.style.color="#fff";}c.title=h+":00 แจ้ง "+n+" ครั้ง";b.appendChild(c);});}
+function logLine(txt,lv){const li=document.createElement("li");li.textContent=txt;if(lv!==null)li.style.color=COL[lv];$("log").prepend(li);while($("log").children.length>LOG_MAX)$("log").lastChild.remove();logs.push({txt:txt,lv:lv});while(logs.length>LOG_MAX)logs.shift();}
 function onEvent(d){
   const lv=Number.isInteger(d.level)&&d.level>=0&&d.level<=2?d.level:null,now=new Date();
+  if(dayKey&&todayKey()!==dayKey){dayKey=todayKey();hours.fill(0);drawHours();}
   const t=num(d.temp_c),rh=num(d.rh),g=num(d.germ_pct),w=num(d.wet_min),sun=num(d.sun_c);
   applyReading(d);
   if(lv!==null){
-    put("state",LV[lv],COL[lv]);$("sd").style.background=COL[lv];
+    put("state",LV[lv],COL[lv]);$("sd").style.background=COL[lv];$("sd").style.color=COL[lv];$("statusCard").style.borderLeftColor=COL[lv];
     put("why",typeof d.alert==="string"?d.alert.slice(0,40).split("+").map(k=>WHY[k]||k).join(" + "):"");
     $("alarm").className="banner"+(lv===2?" show":"");
     if(lv>0){hours[now.getHours()]++;drawHours();}
@@ -217,6 +381,8 @@ function onEvent(d){
   const txt=typeof d.event==="string"?"อุณหภูมิสูงต่อเนื่อง "+(num(d.duration_s)!==null?d.duration_s+" วินาที":"")+" ("+d.event.slice(0,30)+")":(lv===null?"?":LV[lv])+" · RH "+(rh===null?"--":rh.toFixed(1))+" · "+(t===null?"--":t.toFixed(1))+" C · ความงอก "+(g===null?"--":Math.round(g));
   logLine(hms(now)+"  "+txt,lv);
   rows.push([now.toISOString(),lv,t,rh,sun,g,w,typeof d.alert==="string"?d.alert:(typeof d.event==="string"?d.event:"")]);
+  if(rows.length>ROWS_MAX)rows.shift();
+  saveSoon();
 }
 
 // ---- บอร์ดเงียบ ----
@@ -238,13 +404,15 @@ function send(obj,label){
 }
 function csvCell(v){const s=v===null||v===undefined?"":String(v);return /[",\r\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
 function saveCsv(head,data,name){
-  const b=new Blob(["\uFEFF"+[head.join(",")].concat(data.map(r=>r.map(csvCell).join(","))).join("\r\n")],{type:"text/csv;charset=utf-8"});
+  const b=new Blob(["﻿"+[head.join(",")].concat(data.map(r=>r.map(csvCell).join(","))).join("\r\n")],{type:"text/csv;charset=utf-8"});
   const u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);
 }
 
 function connect(){
   team=$("team").value.trim();
   if(!/^team[0-9a-z_]{2,20}$/.test(team)||team==="team00"){conn("ใส่เลขทีม เช่น team08",false);return;}
+  put("topic",ROOT+"/"+team+"/#");
+  if(loadedTeam!==team){if(loadedTeam)saveNow();loadStore(team);}
   if(typeof mqtt==="undefined"){conn("โหลดไลบรารี MQTT ไม่ได้ ตรวจเน็ต",false);return;}
   if(client)client.end(true);
   conn("กำลังต่อ "+team,false);
@@ -265,6 +433,15 @@ $("ack").onclick=()=>{if(send({cmd:"ack"},"รับทราบ"))$("alarm").cl
 $("set").onclick=()=>{const v=Number($("thi").value);if(!Number.isInteger(v)||v<16||v>45){put("cmdMsg","เกณฑ์ต้องเป็นจำนวนเต็ม 16-45");return;}send({cmd:"set",t_hi:v},"t_hi "+v);};
 $("csv").onclick=()=>saveCsv(["time","level","temp_c","rh","sun_c","germ_pct","wet_min","alert"],rows,"seed_events_"+team+".csv");
 $("csvH").onclick=()=>saveCsv(["time","rh","temp_c"],hist.map(p=>[new Date(p.ts).toISOString(),p.rh,p.t]),"seed_history_"+team+".csv");
+window.addEventListener("resize",drawChart);
+window.addEventListener("pagehide",saveNow);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)saveNow();});
+$("clr").onclick=()=>{
+  if(!confirm("ล้างกราฟ สมุดโกดัง และประวัติที่เก็บไว้ในเบราว์เซอร์นี้ของ "+(team||"ทีมนี้")+" ?"))return;
+  hist.length=0;rows.length=0;logs.length=0;hours.fill(0);$("log").textContent="";
+  try{localStorage.removeItem(STORE+loadedTeam);}catch(e){}
+  drawHours();drawChart();
+};
 setInterval(checkSilent,1000);
 drawRail();drawHours();drawChart();
 if(team)connect();else conn("ใส่เลขทีมแล้วกดเชื่อมต่อ",false);
